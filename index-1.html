@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Builder — Génération multi-IA</title>
+<meta name="description" content="AI Builder : génère des projets complets en fusionnant les réponses de plusieurs IA gratuites.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ================= FOND ANIMÉ ================= -->
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow bg-glow--a" aria-hidden="true"></div>
+<div class="bg-glow bg-glow--b" aria-hidden="true"></div>
+
+<!-- ================= HEADER ================= -->
+<header class="topbar">
+  <div class="topbar__brand">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 40 40" class="brand-mark__svg">
+        <circle cx="8" cy="10" r="3" class="node node--a"/>
+        <circle cx="8" cy="30" r="3" class="node node--b"/>
+        <circle cx="8" cy="20" r="3" class="node node--c"/>
+        <circle cx="30" cy="20" r="4.5" class="node node--core"/>
+        <line x1="8" y1="10" x2="30" y2="20" class="link"/>
+        <line x1="8" y1="30" x2="30" y2="20" class="link"/>
+        <line x1="8" y1="20" x2="30" y2="20" class="link"/>
+      </svg>
+    </span>
+    <div class="brand-text">
+      <h1 class="brand-title">AI Builder</h1>
+      <span class="brand-subtitle">Fusion multi-IA</span>
+    </div>
+  </div>
+
+  <div class="topbar__actions">
+    <span class="badge badge--v1">V1 · Architecture</span>
+    <button class="icon-btn" id="btn-history" title="Historique" aria-label="Ouvrir l'historique">
+      <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/><path d="M12 7v5l3.5 2"/></svg>
+    </button>
+    <button class="icon-btn" id="btn-settings" title="Paramètres" aria-label="Ouvrir les paramètres">
+      <svg viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 13a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V19a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H4a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 5.64 8.6a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H10a1.7 1.7 0 0 0 1-1.55V2a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V8.1c.14.6.6 1.09 1.55 1.4H22a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ================= PANNEAU HISTORIQUE ================= -->
+  <aside class="panel panel--history" id="panel-history" aria-hidden="true">
+    <div class="panel__header">
+      <h2>Historique</h2>
+      <button class="icon-btn icon-btn--ghost" data-close="panel-history" aria-label="Fermer">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="panel__body">
+      <div class="history-empty" id="history-empty">
+        <p>Aucune génération pour le moment.</p>
+        <span>Vos projets générés apparaîtront ici, enregistrés localement dans votre navigateur.</span>
+      </div>
+      <ul class="history-list" id="history-list"></ul>
+    </div>
+  </aside>
+
+  <!-- ================= CONTENU PRINCIPAL ================= -->
+  <main class="main">
+
+    <section class="hero">
+      <p class="hero__eyebrow">Un prompt · plusieurs IA · un seul résultat</p>
+      <h2 class="hero__title">Décrivez ce que vous voulez construire.</h2>
+      <p class="hero__lead">AI Builder interroge simultanément plusieurs moteurs d'IA gratuits, compare leurs réponses et fusionne les meilleures parties pour livrer un résultat plus fiable qu'une seule IA seule.</p>
+    </section>
+
+    <section class="composer" aria-label="Zone de génération">
+      <div class="composer__card">
+        <label for="prompt-input" class="composer__label">Votre demande</label>
+        <textarea
+          id="prompt-input"
+          class="composer__textarea"
+          placeholder="Ex. Crée une application de suivi de tendances musicales avec un tableau de bord, un système de score et des notifications..."
+          rows="6"
+        ></textarea>
+
+        <div class="composer__footer">
+          <div class="composer__engines" id="active-engines-preview" title="IA actives">
+            <!-- rempli dynamiquement par settings.js -->
+          </div>
+
+          <div class="composer__buttons">
+            <button class="btn btn--ghost" id="btn-clear">Effacer</button>
+            <button class="btn btn--primary" id="btn-generate">
+              <span class="btn__label">Générer</span>
+              <svg class="btn__icon" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PROGRESSION ================= -->
+    <section class="progress-zone" id="progress-zone" hidden>
+      <div class="progress-zone__head">
+        <div class="loader" aria-hidden="true">
+          <span class="loader__ring"></span>
+          <span class="loader__ring loader__ring--delay"></span>
+          <span class="loader__core"></span>
+        </div>
+        <div class="progress-zone__text">
+          <h3 id="progress-title">Initialisation…</h3>
+          <p id="progress-subtitle">Préparation de la requête multi-IA</p>
+        </div>
+        <span class="progress-percent" id="progress-percent">0%</span>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-bar__fill" id="progress-bar-fill"></div>
+      </div>
+
+      <ol class="steps" id="steps-list">
+        <li class="step" data-step="read">
+          <span class="step__dot"></span>
+          <span class="step__label">Lecture de la demande</span>
+        </li>
+        <li class="step" data-step="dispatch">
+          <span class="step__dot"></span>
+          <span class="step__label">Envoi aux IA actives</span>
+        </li>
+        <li class="step" data-step="wait">
+          <span class="step__dot"></span>
+          <span class="step__label">Attente des réponses</span>
+        </li>
+        <li class="step" data-step="compare">
+          <span class="step__dot"></span>
+          <span class="step__label">Comparaison des réponses</span>
+        </li>
+        <li class="step" data-step="merge">
+          <span class="step__dot"></span>
+          <span class="step__label">Fusion des meilleures parties</span>
+        </li>
+        <li class="step" data-step="finalize">
+          <span class="step__dot"></span>
+          <span class="step__label">Génération du résultat final</span>
+        </li>
+      </ol>
+
+      <div class="engine-status" id="engine-status"></div>
+    </section>
+
+    <!-- ================= RÉSULTAT ================= -->
+    <section class="result-zone" id="result-zone" hidden>
+      <div class="result-card">
+        <div class="tabs" role="tablist" aria-label="Sections du résultat">
+          <button class="tab is-active" data-tab="reponse" role="tab" aria-selected="true">Réponse</button>
+          <button class="tab" data-tab="code" role="tab" aria-selected="false">Code</button>
+          <button class="tab" data-tab="explications" role="tab" aria-selected="false">Explications</button>
+          <button class="tab" data-tab="fichiers" role="tab" aria-selected="false">Fichiers générés</button>
+          <button class="tab" data-tab="logs" role="tab" aria-selected="false">Logs</button>
+        </div>
+
+        <div class="tab-panels">
+          <div class="tab-panel is-active" data-panel="reponse" id="panel-reponse"></div>
+          <div class="tab-panel" data-panel="code" id="panel-code"></div>
+          <div class="tab-panel" data-panel="explications" id="panel-explications"></div>
+          <div class="tab-panel" data-panel="fichiers" id="panel-fichiers"></div>
+          <div class="tab-panel" data-panel="logs" id="panel-logs"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= PANNEAU PARAMÈTRES ================= -->
+  <aside class="panel panel--settings" id="panel-settings" aria-hidden="true">
+    <div class="panel__header">
+      <h2>Paramètres</h2>
+      <button class="icon-btn icon-btn--ghost" data-close="panel-settings" aria-label="Fermer">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="panel__body">
+
+      <div class="settings-group">
+        <h3>Apparence</h3>
+        <div class="field field--row">
+          <label for="theme-toggle">Thème clair</label>
+          <label class="switch">
+            <input type="checkbox" id="theme-toggle">
+            <span class="switch__track"><span class="switch__thumb"></span></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <h3>Génération</h3>
+        <div class="field">
+          <label for="setting-temperature">Température <span class="field__value" id="temperature-value">0.7</span></label>
+          <input type="range" id="setting-temperature" min="0" max="1" step="0.05" value="0.7">
+        </div>
+        <div class="field">
+          <label for="setting-max-tokens">Nombre maximal de tokens</label>
+          <input type="number" id="setting-max-tokens" min="256" max="32000" step="256" value="4096">
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <h3>Moteurs IA</h3>
+        <p class="settings-group__hint">Activez les IA à interroger et renseignez leurs identifiants. Les clés sont stockées localement et ne sont jamais affichées en clair. En production (GitHub Pages / Actions), utilisez des <em>GitHub Secrets</em> nommés (ex. <code>GEMINI_SECRET_KEY</code>) au lieu de coller une clé ici.</p>
+
+        <div class="engine-list" id="engine-settings-list">
+          <!-- généré dynamiquement par settings.js à partir de aiManager.js -->
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <h3>Données</h3>
+        <div class="field field--row">
+          <button class="btn btn--ghost btn--small" id="btn-export-settings">Exporter les paramètres</button>
+          <button class="btn btn--ghost btn--small" id="btn-reset-settings">Réinitialiser</button>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+</div>
+
+<!-- ================= OVERLAY (mobile) ================= -->
+<div class="overlay" id="overlay"></div>
+
+<!-- ================= TOASTS ================= -->
+<div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+
+<!-- ================= MODALE DÉTAIL HISTORIQUE ================= -->
+<div class="modal" id="history-modal" hidden>
+  <div class="modal__backdrop" data-close-modal></div>
+  <div class="modal__card">
+    <div class="modal__header">
+      <h3 id="history-modal-title">Projet</h3>
+      <button class="icon-btn icon-btn--ghost" data-close-modal aria-label="Fermer">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="modal__body" id="history-modal-body"></div>
+    <div class="modal__footer">
+      <button class="btn btn--ghost" id="history-modal-delete">Supprimer</button>
+      <button class="btn btn--primary" id="history-modal-relaunch">Relancer la génération</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/aiManager.js"></script>
+<script src="js/api.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
